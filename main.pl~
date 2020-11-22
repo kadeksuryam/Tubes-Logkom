@@ -42,7 +42,7 @@ start :-
     title,
     write('Masukkan Username: '),
     read(Username),
-    asserta(player(Username)), write('Halo, '),
+    asserta(player(Username)), write('Halo,'Username),
     write(Username), nl, initJob.
     /* tampilkan map, acak posisi pemain */
     /* as long as, pemain tidak di boss/toko */
