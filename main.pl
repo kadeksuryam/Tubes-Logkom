@@ -4,30 +4,36 @@
 :- dynamic(player/7).
 
 /* Menampilkan cerita dan command-command yang ada */
-title :- 
+title :-
     write('[ Insert Cerita Here ]'), nl,
     write('Available command: '), nl,
     write('start. --> start the game'), nl,
     write('map. --> open the map'), nl.
 
-infoJob :-
-    write('1. Swordsman'), nl,
-    write('Attack : 1'), nl,
-    write('Defense: 2'), nl,
-    write('hp_max : 3'), nl,
-    write('2. Archer'), nl,
-    write('Attack : 4'), nl,
-    write('Defense: 5'), nl,
-    write('hp_max : 6'), nl,
-    write('3. Sorcerer'), nl,
-    write('Attack : 7'), nl,
-    write('Defense: 8'), nl,
-    write('hp_max : 9'), nl.    
+job_stat :-
+    write('1. Achilles'),nl,
+    write('Job : Warrior'),nl,
+    write('Attack : 160'),nl,
+    write('Defense': 130),nl,
+    write('HP : 500')
+    ,nl,nl,
+    write('2. Hawkeye '),nl,
+    write('Job : Archer'),nl,
+    write('Attack : 180'),nl,
+    write('Defense': 100),nl,
+    write('HP : 500')
+    ,nl,nl,
+    write('3. Evius'),nl,
+    write('Job : Sorcerer'),nl,
+    write('Attack : 150'),nl,
+    write('Defense': 150),nl,
+    write('HP : 500'),
+    nl,nl.  
 
 initJob(Username) :-
     write('Silahkan pilih job yang kamu inginkan'), nl,
     write('Berikut informasi dari masing-masing job: '), nl,
-    infoJob,
+    job_stat,
     write('Job pilihan anda: '), read(Job),
     (
         Exp_now is 0,
@@ -49,4 +55,4 @@ start :-
         write([User, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next]), nl.
     /* tampilkan map, acak posisi pemain */
     /* as long as, pemain tidak di boss/toko */
-    
+
