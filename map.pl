@@ -1,11 +1,27 @@
-/* Map dengan ukuran 10*10 */
+/* Posisi pemain disimpan dengan koordinat x,y dimana x >= 0 dan y >= 0 */
+:- dynamic(playerCoor/2).
 
-initCol(1, ['.']) :- !.
-initCol(N, ['.' | T]) :-
-    N2 is N-1, initCol(N2, T).
+playerCoor(20,-20).
+initmap :- 
+	random(1,20,X),
+	random(1,20,Y),
+	asserta(playerCoor(X,Y)).
 
-initMat(1, M, Mat) :- 
-    initCol(M, Rows), Mat = [Rows],!.vb 
+/* ukuran map 20x20 */
+pagar(0,_).
+pagar(_,0).
+pagar(21,_).
+pagar(_,-21).
 
-initMat(N, M, Mat) :-
-    N > 1, N2 is N-1, initCol(M, Rows), Mat = [Rows], initMat(N2, M, T)
+/* Basis */
+endmap(21,-21):- 
+	write('#'),nl.
+/* Rekurens */
+wrtmap(X,Y):- 
+	endmap(X,Y);
+	pagar(X,Y),(X =\= 21),write('#'),(Z is X+1),wrtmap(Z,Y);
+	pagar(X,Y),(X == 21),write('#'),nl,(XX is 0),(YY is Y-1),wrtmap(XX,YY);
+	playerCoor(X,Y),write('P'),(Z is X+1),wrtmap(Z,Y);
+	write('-'),(Z is X+1),wrtmap(Z,Y).
+	
+map :- wrtmap(0,0),!.
