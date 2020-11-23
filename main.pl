@@ -7,11 +7,46 @@
 
 /* Menampilkan cerita dan command-command yang ada */
 title :-
-    write('[ Insert Cerita Here ]'), nl,
+    write('Once upon a time in Dome Kingdom'), nl,
+    sleep(0.5),
+    write('...'), nl,
+    sleep(0.5),
+    write('Messenger: "King of Battle!, there is a terrible situation"'), nl,
+    sleep(0.5),
+    write('King of Battle: "Dont worry, tell me what is that?"'), nl,
+    sleep(0.5),
+    write('Messenger: "I found this letter in the south gate of kingdom"'), nl,
+    sleep(1),
+    write(' '), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('| Dear King of Battle,                 |'), nl,
+    write('| Go to Emod and die with your sister! |'), nl,
+    write('|                                 -??? |'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write(' '), nl,
+    sleep(1),
+    write('King of Battle: "Who the hell is this!?"'), nl,
+    sleep(0.5),
+    write('King of Battle: "How dare you!?"'), nl,
+    sleep(0.5),
+    write('King of Battle: "I will go to Emod and find my sister"'), nl,
+    sleep(0.5),
+    write('...'), nl,
+    sleep(0.5),
+    write('...'), nl,
+    sleep(0.5),
+    write('...'), nl,
+    sleep(0.5),
+    write('Adventurer!, Welcome to Emod, the city of Madness'), nl,
+    sleep(0.5),
+    write('In order to start your jorney to find your sister'), nl,
+    sleep(0.5),
+    write('I will show you the available commands'), nl,
+    sleep(1),
     help.
 
 help :-
-    write('Available command: '), nl,nl,
+    write('Available commands: '), nl,nl,
     write('start. --> start the game'), nl,
     write('map. --> open the map'), nl,
     write('help. --> open available commands'),nl,
@@ -100,8 +135,8 @@ start :-
             load;
         Pil =:= 2 ->
             title,
-            write('Masukkan Username: '),
-            read(Username),
+            write('What is your name, Adventurer?'),nl,
+            write('Your name: '),
             asserta(player(Username, _, _ , _, _, _, _, _, _, _)), initJob(Username), nl
     ).
 
