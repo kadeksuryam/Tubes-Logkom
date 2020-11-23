@@ -1,8 +1,9 @@
 :- include('fact.pl').
+:- include('map.pl').
 
 /* Player memiliki parameter (Username, job, attack, defense, hp_now, hp_max, exp_now, exp_next, level, money) */
 :- dynamic(player/10).
-:- dynamic(state/1).
+:- dynamic(statePlayer/1).
 
 /* Menampilkan cerita dan command-command yang ada */
 title :-
@@ -15,11 +16,11 @@ help :-
     write('map. --> open the map'), nl,
     write('help. --> open available commands'),nl,
     write('inventory. --> open inventory'),nl,
-    write('quit. --> quit the game'),nl,
     write('A. --> move left'),nl,
     write('W. --> move up '),nl,
     write('S. --> move down'),nl,
-    write('D. --> move right'),nl.
+    write('D. --> move right'),nl,
+    write('status. --> open status pemain'), nl, nl.
 
 /* Menampilkan Item */
 
@@ -67,6 +68,8 @@ initJob(Username) :-
     Level is 1,
     Job_name = 'Warrior',
     Money is 100,
+    State = 'berpetualang',
+    asserta(statePlayer(State)),
     write('Job pilihan anda: '), read(Job),
     (
         Job =:= 1 ->
@@ -82,14 +85,58 @@ initJob(Username) :-
     nl, write('Selamat berpetualang!'), nl.
 
 
+
+
 /* Main control */
 start :-
     retractall(player(_, _, _, _, _, _, _, _, _, _)),
-    title,
-    write('Masukkan Username: '),
-    read(Username),
-    asserta(player(Username, _, _ , _, _, _, _, _, _, _)), initJob(Username), nl.
+    write('Untuk memulai game pilih: '), nl,
+    write('1. Load save file'), nl,
+    write('2. New Game'), nl,
+    write('> '),
+    read(Pil),
+    (
+        Pil =:= 1 ->
+            load;
+        Pil =:= 2 ->
+            title,
+            write('Masukkan Username: '),
+            read(Username),
+            asserta(player(Username, _, _ , _, _, _, _, _, _, _)), initJob(Username), nl
+    ).
 
     /* tampilkan map, acak posisi pemain */
     /* as long as, pemain tidak di boss/toko */
 
+/* Quit */
+quit :-
+    write('Terimakasih telah bermain game ini'), nl,
+    write('Apakah anda ingin menyimpan state saat ini? (y/n) : '),
+    read(Pil),
+    (
+        Pil = 'y' -> 
+            write('Berikan nama save file: '),
+            read(SaveFileName),
+            atom_concat(SaveFileName, '.txt', SaveFileName2),
+            open(SaveFileName2, write, Stream),
+            player(Username, Job, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money),
+            statePlayer(State),
+            write(Stream, [Username, Job, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money, State]),
+            nl(Stream), close(Stream), write('State saat ini sudah tersimpan!'),nl, write('See you next time!'), nl,!;
+        Pil = 'n' ->
+            write('See you next time!'), nl, !
+    ).
+
+/* load save file */
+/* Asumsikan file sudah ada */
+load :- 
+    write('Masukkan nama save file : '),
+    read(SaveFileName),
+    atom_concat(SaveFileName, '.txt', SaveFileName2),
+    open(SaveFileName2, read, Stream),
+    \+ at_end_of_stream(Stream),
+    read(Stream, X),
+    X = [Username, Job, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money, State|_],
+    asserta(player(Username, Job, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+    asserta(statePlayer(State)), close(Stream);
+    at_end_of_stream(Stream).
