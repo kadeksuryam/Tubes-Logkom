@@ -1,6 +1,7 @@
 /* Position represented in Coordinat x,y where mapsize >= x > 0 and mapsize <= y < 0 */
 :- dynamic(playerCoor/2).
 :- dynamic(storeCoor/2).
+:- dynamic(questCoor/2).
 /* Dungeon boss coordinate */
 dungeonBossCoor(20,-20).
 
