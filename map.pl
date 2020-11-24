@@ -28,7 +28,7 @@ initmap :-
 	/* Quest Position */
 	random(1,20,XS),
 	random(-20,-1,YS),
-	(XS =\= XS),(YS =\= YS),(XQ =\= X),(YQ =\= Y),/* avoiding conflict position */
+	(XS =\= XS),(YS =\= YS),(XQ =\= X),(YQ =\= Y), /* avoiding conflict position */
 	retractall(questCoor(X,Y)),
 	asserta(questCoor(XS,YS)).
 
