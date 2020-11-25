@@ -1,9 +1,7 @@
 :- include('info.pl').
 :- include('util.pl').
-
-/* Player memiliki parameter (Username, job, attack, defense, hp_now, hp_max, exp_now, exp_next, level, money) */
-:- dynamic(player/10).
-/* State apakah player sedang bertarung/berpetualang/quest */
+/* Player memiliki parameter (Username, job, attack, dmg_skill, defense, hp_now, hp_max, exp_now, exp_next, level, money) */
+:- dynamic(player/11).
 :- dynamic(statePlayer/1).
 /* berisi inventory player yang meliputi : listWeapon, listArmor, listAcc, listSpell */
 :- dynamic(inventoryPlayer/4).
@@ -11,11 +9,12 @@
 
 /* Menampilkan status */
 status :-
-    player(Username, Job, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money),
+    player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money),
     format('Username: %s\n', [Username]),
     format('Level: %d\n', [Level]),
     format('Job: %s\n', [Job]),
     format('Attack: %d\n', [Attack]),
+    format('Damage skill: %d\n',[Dmg_skill]),
     format('Defense: %d\n', [Defense]),
     format('Hp: %d/%d\n', [Hp_now, Hp_max]),
     format('Exp: %d/%d\n', [Exp_now, Exp_next]),
@@ -57,7 +56,7 @@ infoinventory :-
     wrtList(ListSpell, 1),
     write('Total: '), 
     len(ListWeapon, I1), len(ListArmor, I2), len(ListAcc, I3), len(ListSpell, I4), I is I1+I2+I3+I4,
-    write(I), write('/100'),  nl.
+    write(I), write('/100'),  nl, !.
 
 inventory :-
     write('Hello! Welcome to your Inventory!'),nl,
@@ -97,16 +96,19 @@ initJob(Username) :-
     (
         Job =:= 1 ->
             Job_name = 'swordsman',
-            job(swordsman, Attack, Defense, Hp_max, _, _),
-            asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
+            job(swordsman, Attack, Defense, Hp_max),
+            player_skill(swordsman,sword_mastery,Dmg_skill),
+            asserta(player(Username, Job_name, Attack, Dmg_skill,Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
         Job =:= 2 ->
             Job_name = 'archer',
-            job(archer, Attack, Defense, Hp_max, _, _),
-            asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
+            job(archer, Attack, Defense, Hp_max),
+            player_skill(archer, meteor_arrow,Dmg_skill),
+            asserta(player(Username, Job_name, Attack, Dmg_skill, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
         Job =:= 3 ->
             Job_name = 'sorcerer',
-            job(sorcerer, Attack, Defense, Hp_max, _, _),
-            asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money))
+            job(sorcerer, Attack, Defense, Hp_max),
+            player_skill(sorcerer,deadly_curse,Dmg_skill),
+            asserta(player(Username, Job_name, Attack, Dmg_skill, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money))
     ),
     nl, write('Happy Adventuring!!'), nl.
 

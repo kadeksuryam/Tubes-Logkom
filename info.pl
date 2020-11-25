@@ -5,9 +5,9 @@
 /* =========== START Fakta-fakta Job ============ */
 /* Job(job_name, attack, defense, hp_max, list_equip, list_potions) */
 
-job(swordsman, 160, 130, 500, [], [heal, rage, heal, rage, heal]).
-job(archer, 180, 100, 500, [], [heal, rage, heal, rage, heal]).
-job(sorcerer, 150, 150, 500, [], [heal, rage, heal, rage, heal]).
+job(swordsman, 160, 130, 500).
+job(archer, 180, 100, 500).
+job(sorcerer, 150, 150, 500).
 
 /* =========== END Fakta-fakta Job ============ */
 
@@ -43,22 +43,38 @@ equip(accessories, sorcerer, pendant_necklace, 0, 0).
 /* Skill tiap job*/ 
 /* skill(job_name, skill)  */
 
-skill(swordsman,slash).
-skill(swordsman,sword_mastery).
-skill(archer, owl_eye).
-skill(archer, meteor_arrow).
-skill(sorcerer,spirit_curse).
-skill(sorcerer,deadly_curse).
+player_skill(swordsman,sword_mastery,300).
+player_skill(archer, meteor_arrow,320).
+player_skill(sorcerer,deadly_curse,280).
 /* =========== END Fakta-fakta Skills ============ */
 
 /* =========== START Fakta-fakta Enemy ============ */
 /* Stat Enemy */
 /* enemy(enemy_name, attack, defense, hp_max) */
-enemy(slime, 15, 15, 300).
-enemy(kobold, 25, 20, 350).
-enemy(lamia, 20, 25, 350).
-enemy(goblin, 30, 30, 400).
-enemy(wyvern, 35, 40, 450).
+stat_enemy(slime, 15, 15, 300).
+stat_enemy(kobold, 25, 20, 350).
+stat_enemy(lamia, 20, 25, 350).
+stat_enemy(goblin, 30, 30, 400).
+stat_enemy(wyvern, 35, 40, 450).
+
+enemy_skill(slime, gloomy, 50).
+enemy_skill(kobold, bold, 70).
+enemy_skill(lamia, kumiaa, 60).
+enemy_skill(goblin, provoke, 80).
+enemy_skill(wyvern, lockdown, 90).
+
+get_exp(slime,30).
+get_exp(kobold,40).
+get_exp(lamia,50).
+get_exp(goblin,60).
+get_exp(wyvern,70).
+
+drop(slime, hp_potion).
+drop(kobold, hp_potion).
+drop(lamia, def_potion).
+drop(goblin, atk_potion).
+drop(wyvern, atk_potion).
+
 /* =========== END Fakta-fakta Enemy ============ */
 
 /*========================== END Fakta-fakta ==========================*/
