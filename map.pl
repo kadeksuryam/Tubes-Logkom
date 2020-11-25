@@ -2,6 +2,9 @@
 :- dynamic(playerCoor/2).
 :- dynamic(storeCoor/2).
 :- dynamic(questCoor/2).
+:- dynamic(enemy/8). 
+:- dynamic(isEnemyAlive/1).
+:- dynamic(run_prob/1).
 /* Dungeon boss coordinate */
 dungeonBossCoor(20,-20).
 
@@ -108,37 +111,122 @@ enemy_spotted :-
         (
             isWyvernArea(X,Y),
             encounter(wyvern,Output),
+            stat_enemy(wyvern, Attack, Defense, hp_max),
+            get_exp(wyvern,Exp),
+            drop(wyvern,item_drop),
+            enemy_skill(wyvern, lockdown, Attack_skill),
+            enemy_name = 'wyvern',
+            asserta(enemy(enemy_name,Attack,Defense, hp_max, hp_max,Exp,item_drop,Attack_skill)),
             (Output =:= 1),
-			write('You found a wyvern!'),nl
-            /* MEMANGGIL FUNGSI BATTLE DENGAN GOBLIN */
+            asserta(isEnemyAlive(1)),
+			write('You found a wyvern!'),nl,
+            write('What would you do, adventurer?'), nl,
+            write('write "fight." without double quote to fight'), nl,
+            write('write "run." without double quote to run'), nl,
+            random(1, 10, P),
+            asserta(run_prob(P)).
+            read(Next),(
+                Next =:= run. ->
+                    run;
+                Next =:= fight. ->
+                    fight    
+            )
         );
         (
             isGoblinArea(X,Y),
             encounter(goblin,Output),
+            stat_enemy(goblin, Attack, Defense, hp_max),
+            get_exp(goblin,Exp),
+            drop(goblin,item_drop),
+            enemy_skill(goblin, provoke, Attack_skill),
+            enemy_name = 'goblin',
+            asserta(enemy(enemy_name,Attack,Defense, hp_max, hp_max,Exp,item_drop,Attack_skill)),
             (Output =:= 1),
+            asserta(isEnemyAlive(1)),
 			write('You found a goblin!'),nl
-            /* MEMANGGIL FUNGSI BATTLE DENGAN KOBOLD */
+            write('What would you do, adventurer?'), nl,
+            write('write "fight." without double quote to fight'), nl,
+            write('write "run." without double quote to run'), nl,
+            random(1, 10, P),
+            asserta(run_prob(P)).
+            read(Next),(
+                Next =:= run. ->
+                    run;
+                Next =:= fight. ->
+                    fight    
+            )
         );
         (
             isLamiaArea(X,Y),
             encounter(lamia,Output),
+            stat_enemy(lamia, Attack, Defense, hp_max),
+            get_exp(lamia,Exp),
+            drop(lamia,item_drop),
+            enemy_skill(lamia, kumiaa, Attack_skill),
+            enemy_name = 'lamia',
+            asserta(enemy(enemy_name,Attack,Defense, hp_max, hp_max,Exp,item_drop,Attack_skill)),
             (Output =:= 1),
+            asserta(isEnemyAlive(1)), 
 			write('You found a lamia!'),nl
-            /* MEMANGGIL FUNGSI BATTLE DENGAN LAMIA */
+            write('What would you do, adventurer?'), nl,
+            write('write "fight." without double quote to fight'), nl,
+            write('write "run." without double quote to run'), nl,
+            random(1, 10, P),
+            asserta(run_prob(P)).
+            read(Next),(
+                Next =:= run. ->
+                    run;
+                Next =:= fight. ->
+                    fight    
+            )
         );
         (
             isKoboldArea(X,Y),
             encounter(kobold,Output),
+            stat_enemy(kobold, Attack, Defense, hp_max),
+            get_exp(kobold,Exp),
+            drop(kobold,item_drop),
+            enemy_skill(kobold, bold, Attack_skill),
+            enemy_name = 'kobold',
+            asserta(enemy(enemy_name,Attack,Defense, hp_max, hp_max,Exp,item_drop,Attack_skill)),
             (Output =:= 1),
+            asserta(isEnemyAlive(1)),
 			write('You found a kobold!'),nl
-            /* MEMANGGIL FUNGSI BATTLE DENGAN GOBLIN */
+            write('What would you do, adventurer?'), nl,
+            write('write "fight." without double quote to fight'), nl,
+            write('write "run." without double quote to run'), nl,
+            random(1, 10, P),
+            asserta(run_prob(P)).
+            read(Next),(
+                Next =:= run. ->
+                    run;
+                Next =:= fight. ->
+                    fight    
+            )
         );
         (
             isSlimeArea(X,Y),
             encounter(slime,Output),
+            stat_enemy(slime, Attack, Defense, hp_max),
+            get_exp(slime,Exp),
+            drop(slime,item_drop),
+            enemy_skill(slime, gloomy, Attack_skill),
+            enemy_name = 'slime',
+            asserta(enemy(enemy_name,Attack,Defense, hp_max, hp_max,Exp,item_drop,Attack_skill)),
             (Output =:= 1),
+            asserta(isEnemyAlive(1)),
 			write('You found a slime!'),nl
-            /* MEMANGGIL FUNGSI BATTLE DENGAN GOBLIN */
+            write('What would you do, adventurer?'), nl,
+            write('write "fight." without double quote to fight'), nl,
+            write('write "run." without double quote to run'), nl,
+            random(1, 10, P),
+            asserta(run_prob(P)).
+            read(Next),(
+                Next =:= run. ->
+                    run;
+                Next =:= fight. ->
+                    fight    
+            )
         )
     ),!.
 
