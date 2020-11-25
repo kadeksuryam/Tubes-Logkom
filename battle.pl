@@ -94,8 +94,8 @@ after_enemy_atk :-
     !.
 /* Player's HP <= 0 */
 after_enemy_atk :-
-    player(Username, _, _,_,_, Hp_now, _, _, _, _, _),
-    Hp_now <= 0,
+    player(_, _, _,_,_, Hp_now, _, _, _, _, _),
+    Hp_now =< 0,
     write('You Lose !!!'),
     !.
 
@@ -150,7 +150,7 @@ enemy_turn :-
 enemy_atk :-
     enemy(enemy_name,atk_enemy,_,_,_,_,_),
     player(_, _, _,_, Defense, Hp_now, Hp_max, _, _, _, _),
-    NeoHealth is (Hp_now-(atk_enemy-(0.1*Defense)),
+    NeoHealth is (Hp_now-(atk_enemy-(0.1*Defense))),
     retract(player(Username, Job, Attack,dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, Attack, dmg_skill,Defense, NeoHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
     write(enemy_name), write(' use basic attack !'), nl,
@@ -168,7 +168,7 @@ enemy_skill :-
     retract(player(Username, Job, Attack, dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, Attack, dmg_skill,Defense, NeoHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
     enemy_skill(enemy_name, X,_),
-    write(enemy_name), write(' use '), write(X), write('!!!') nl,
+    write(enemy_name), write(' use '), write(X), write('!!!'), nl,
     retract(isEnemySkill(_)),
     after_enemy_atk,
     !.
