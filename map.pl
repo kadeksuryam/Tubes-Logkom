@@ -1,3 +1,4 @@
+:- include('battle.pl').
 /* Position represented in Coordinat x,y where mapsize >= x > 0 and mapsize <= y < 0 */
 :- dynamic(playerCoor/2).
 :- dynamic(storeCoor/2).
@@ -120,17 +121,7 @@ enemy_spotted :-
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a wyvern!'),nl,
-            write('What would you do, adventurer?'), nl,
-            write('write "fight." without double quote to fight'), nl,
-            write('write "run." without double quote to run'), nl,
-            random(1, 10, P),
-            asserta(run_prob(P)), 
-            read(Next),(
-                Next =:= run ->
-                    run;
-                Next =:= fight ->
-                    fight    
-            )
+            next_action
         );
         (
             isGoblinArea(X,Y),
@@ -144,17 +135,7 @@ enemy_spotted :-
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a goblin!'),nl,
-            write('What would you do, adventurer?'), nl,
-            write('write "fight." without double quote to fight'), nl,
-            write('write "run." without double quote to run'), nl,
-            random(1, 10, P),
-            asserta(run_prob(P)),
-            read(Next),(
-                Next =:= run ->
-                    run;
-                Next =:= fight ->
-                    fight    
-            )
+            next_action
         );
         (
             isLamiaArea(X,Y),
@@ -168,17 +149,7 @@ enemy_spotted :-
             (Output =:= 1),
             asserta(isEnemyAlive(1)), 
 			write('You found a lamia!'),nl,
-            write('What would you do, adventurer?'), nl,
-            write('write "fight." without double quote to fight'), nl,
-            write('write "run." without double quote to run'), nl,
-            random(1, 10, P),
-            asserta(run_prob(P)),
-            read(Next),(
-                Next =:= run ->
-                    run;
-                Next =:= fight ->
-                    fight    
-            )
+            next_action
         );
         (
             isKoboldArea(X,Y),
@@ -192,17 +163,7 @@ enemy_spotted :-
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a kobold!'),nl,
-            write('What would you do, adventurer?'), nl,
-            write('write "fight." without double quote to fight'), nl,
-            write('write "run." without double quote to run'), nl,
-            random(1, 10, P),
-            asserta(run_prob(P)),
-            read(Next),(
-                Next =:= run ->
-                    run;
-                Next =:= fight ->
-                    fight    
-            )
+            next_action
         );
         (
             isSlimeArea(X,Y),
@@ -216,20 +177,23 @@ enemy_spotted :-
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a slime!'),nl,
-            write('What would you do, adventurer?'), nl,
-            write('write "fight." without double quote to fight'), nl,
-            write('write "run." without double quote to run'), nl,
-            random(1, 10, P),
-            asserta(run_prob(P)),
-            read(Next),(
-                Next =:= run ->
-                    run;
-                Next =:= fight ->
-                    fight    
-            )
+            next_action
         )
     ),!.
-
+/* Next Action */
+next_action :-
+    write('What would you do, adventurer?'), nl,
+    write('1. fight'), nl,
+    write('2. run'), nl,
+    write('> '),
+    random(1, 10, P),
+    asserta(run_prob(P)), 
+    read(Next),(
+        Next =:= 2 ->
+            run;
+        Next =:= 1 ->
+            fight    
+    ).
 /* Enemy Spawn Zone/Area */
 /* Format : (enemy_name,Xmin,Xmax,Ymax,Ymin) */
 spawn_area(slime,2,7,-2,-15).
