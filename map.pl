@@ -223,3 +223,12 @@ teleport(X,Y) :-
 	(((X >= 21);(X =< 0);(Y =< -21);(Y >= 0)),write('Invalid Coordinate!!!'),!);
 	(inventory(teleport_rune,N),(N > 0),retract(playerCoor(_,_)),asserta(playerCoor(X,Y)),!);
 	write('You don\'t have any Teleportation Rune in your inventory.').
+
+/* Info map */
+infomap :-
+    nl,
+    write('Information about the map: '), nl,
+    write('P is your position right now'), nl,
+    write('Q is Quest position'), nl,
+    write('S is Shop position'), nl,
+    write('D is the final boss position'), nl.

@@ -1,5 +1,4 @@
 /* Berisi Fakta-fakta dan Informasi tentang game seperti cerita, items, command-2 */
-:- include('info.pl')
 
 /*========================== START Fakta-fakta ==========================*/
 

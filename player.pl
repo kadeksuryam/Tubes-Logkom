@@ -1,6 +1,13 @@
+:- include('info.pl').
+:- include('util.pl').
+
 /* Player memiliki parameter (Username, job, attack, defense, hp_now, hp_max, exp_now, exp_next, level, money) */
 :- dynamic(player/10).
+/* State apakah player sedang bertarung/berpetualang/quest */
 :- dynamic(statePlayer/1).
+/* berisi inventory player yang meliputi : listWeapon, listArmor, listAcc, listSpell */
+:- dynamic(inventoryPlayer/4).
+
 
 /* Menampilkan status */
 status :-
@@ -36,6 +43,41 @@ job_stat :-
     write('HP : 500'),
     nl,nl.
 
+/* Menampilkan inventory user */
+infoinventory :-
+    write('Your Inventory: '), nl,
+    inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell),nl,
+    write('Weapons: '), 
+    wrtList(ListWeapon, 1),
+    write('Armor: '), 
+    wrtList(ListArmor, 1),
+    write('Accesoris: '),
+    wrtList(ListAcc, 1),
+    write('Spell: '),
+    wrtList(ListSpell, 1),
+    write('Total: '), 
+    len(ListWeapon, I1), len(ListArmor, I2), len(ListAcc, I3), len(ListSpell, I4), I is I1+I2+I3+I4,
+    write(I), write('/100'),  nl.
+
+inventory :-
+    write('Hello! Welcome to your Inventory!'),nl,
+    infoinventory, nl,
+    write('Do you want to throw some of your items? (y/n): '), 
+    read(Pil),
+    (
+        Pil = 'y',        
+            write('Item\'s Name: '),
+            read(ItemName),
+            inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell),
+            delElmtList(ListWeapon, ItemName, I1),
+            delElmtList(ListArmor, ItemName, I2),
+            delElmtList(ListAcc, ItemName, I3),
+            delElmtList(ListSpell, ItemName, I4),
+            retractall(inventoryPlayer(_, _, _, _)),
+            asserta(inventoryPlayer(I1, I2, I3, I4)),
+            infoinventory
+    ).
+
 initJob(Username) :-
     nl, write('Choose your job'), nl,
     write('The following is information from each job:'), nl,
@@ -45,20 +87,25 @@ initJob(Username) :-
     Level is 1,
     Money is 100,
     State = 'adventure',
+    ListWeapon = [],
+    ListArmor = [],
+    ListAcc = [],
+    ListSpell = [],
     asserta(statePlayer(State)),
+    asserta(inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell)),
     write('Your Choice: '), read(Job),
     (
         Job =:= 1 ->
             Job_name = 'swordsman',
-            job(swordsman, Attack, Defense, Hp_max),
+            job(swordsman, Attack, Defense, Hp_max, _, _),
             asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
         Job =:= 2 ->
             Job_name = 'archer',
-            job(archer, Attack, Defense, Hp_max),
+            job(archer, Attack, Defense, Hp_max, _, _),
             asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money));
         Job =:= 3 ->
             Job_name = 'sorcerer',
-            job(sorcerer, Attack, Defense, Hp_max),
+            job(sorcerer, Attack, Defense, Hp_max, _, _),
             asserta(player(Username, Job_name, Attack, Defense, Hp_max, Hp_max, Exp_now, Exp_next, Level, Money))
     ),
     nl, write('Happy Adventuring!!'), nl.

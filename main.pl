@@ -1,6 +1,5 @@
-/*:- include('map.pl'). */
+:- include('map.pl'). 
 :- include('player.pl').
-:- include('info.pl').
 
 /* Main control */
 start :-
@@ -17,10 +16,7 @@ start :-
             write('What is your name, Adventurer? : '),
             read(Username),
             asserta(player(Username, _, _ , _, _, _, _, _, _, _)), initJob(Username), nl
-    ).
-
-    /* tampilkan map, acak posisi pemain */
-    /* as long as, pemain tidak di boss/toko */
+    ), initmap, map, infomap.
 
 /* Quit */
 quit :-
