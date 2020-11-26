@@ -51,23 +51,25 @@ player_skill(sorcerer,deadly_curse,280).
 /* =========== START Fakta-fakta Enemy ============ */
 /* Stat Enemy */
 /* enemy(enemy_name, attack, defense, hp_max) */
-stat_enemy(slime, 15, 15, 300).
-stat_enemy(kobold, 25, 20, 350).
-stat_enemy(lamia, 20, 25, 350).
-stat_enemy(goblin, 30, 30, 400).
-stat_enemy(wyvern, 35, 40, 450).
+stat_enemy(slime, 30, 15, 300).
+stat_enemy(kobold, 50, 20, 350).
+stat_enemy(lamia, 40, 25, 350).
+stat_enemy(goblin, 60, 30, 400).
+stat_enemy(wyvern, 70, 40, 450).
+stat_enemy(boss, 1000, 1000, 3000).
 
 enemy_skill(slime, gloomy, 50).
 enemy_skill(kobold, bold, 70).
 enemy_skill(lamia, kumiaa, 60).
 enemy_skill(goblin, provoke, 80).
 enemy_skill(wyvern, lockdown, 90).
+enemy_skill(boss, earthquake, 2000).
 
-get_exp(slime,30).
-get_exp(kobold,40).
-get_exp(lamia,50).
-get_exp(goblin,60).
-get_exp(wyvern,70).
+get_exp(slime,15).
+get_exp(kobold,20).
+get_exp(lamia,25).
+get_exp(goblin,30).
+get_exp(wyvern,35).
 
 drop(slime, hp_potion).
 drop(kobold, hp_potion).
