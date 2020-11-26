@@ -1,13 +1,10 @@
 
 /*enemy(enemy_name,atk,def, hp_now, hp_max,exp,drop,atk_skill)*/
 /*player(Username, Job, Attack, dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)*/
-:- dynamic(enemy/8). 
-:- dynamic(player/11).
-:- dynamic(isEnemyAlive/1).
 :- dynamic(isEnemySkill/1).
 :- dynamic(isFight/1).
 :- dynamic(isSkill/1).
-:- dynamic(run_prob/1).
+
 
 run :-
     \+ isEnemyAlive(_),
