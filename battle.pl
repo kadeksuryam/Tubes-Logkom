@@ -60,11 +60,16 @@ fight :-
     !.
 
 ni :- 
-    write("Choose :"),nl,
-    write('player_atk.'),nl,
-    write('OR'),nl,
-    write('player_skill.'),nl,
-    !.
+    write('Make decisions quickly, adventurer !!!'), nl,
+    write('1. player_atk'), nl,
+    write('2. player_skill'), nl,
+    write('> '),
+    read(Next),(
+        Next =:= 1 ->
+            player_atk;
+        Next =:= 2 ->
+            player_skill    
+    ).
 
 
 /* ~ After Player Atk ~ */

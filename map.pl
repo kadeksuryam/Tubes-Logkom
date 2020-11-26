@@ -6,6 +6,7 @@
 :- dynamic(enemy/8). 
 :- dynamic(isEnemyAlive/1).
 :- dynamic(run_prob/1).
+:- dynamic(isFight/1).
 /* Dungeon boss coordinate */
 dungeonBossCoor(20,-20).
 
@@ -189,10 +190,10 @@ next_action :-
     random(1, 10, P),
     asserta(run_prob(P)), 
     read(Next),(
-        Next =:= 2 ->
-            run;
         Next =:= 1 ->
-            fight    
+            fight;
+        Next =:= 2 ->
+            run    
     ).
 /* Enemy Spawn Zone/Area */
 /* Format : (enemy_name,Xmin,Xmax,Ymax,Ymin) */
