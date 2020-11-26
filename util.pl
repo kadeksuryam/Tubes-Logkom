@@ -33,13 +33,13 @@ wrtList(List, It) :-
     List = [H|T],
     write(It), write('. '), write(H), nl, It2 is It+1, wrtList(T, It2), !;
     !.
-
+/*
 delElmtList(List, X, Ans) :-
     List = [H|T],
     \+X = H, delElmtList(T, X, Ans2), Ans = [H|Ans2], !;
     List = [_|T], delElmtList(T, X, Ans), !;
     Ans = [],!. 
-
+*/
 concatList([], [], ListAns) :- ListAns = [], !.
 
 concatList([], List2, ListAns) :-
@@ -51,4 +51,10 @@ concatList(List1, List2, ListAns) :-
 appendList([], X, Ans) :- Ans = [X],!.
 appendList(List, X, Ans) :-
     List = [H|T], appendList(T, X, Ans2), Ans = [H|Ans2],!. 
+
+
+delElmtList([], _, []) :- !.
+delElmtList([H|T], H, T) :- !.
+delElmtList([H|T], X, [H|Ans]) :- delElmtList(T, X, Ans), !.
+
 /*============ END LIST =========== */

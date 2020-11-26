@@ -296,35 +296,59 @@ shop :-
     (X_player = X_store), (Y_player = Y_store), */
     write('Welcome to the Shop!'), nl,
     write('1. You can get any equipments by doing \'Gacha\' (100 gold)'), nl,
-    write('Or you can buy these potions: '), nl,
-    write('2. Heal Potion (50 gold)'), nl,
-    write('3. Rage Potion (50 gold)'), nl,
+    write('2. Potion (50 gold)'), nl,
     write('Your choice : '), read(Choice),
     (
-        Choice =:= 1 ->
-            player(_, Job, _, _, _, _, _, _, _, _),
-            findall(Weapons, equip(weapon, Job, Weapons, _, _), ListofWeapons),
-            findall(Armors , equip(armor, Job, Armors , _, _), ListofArmors),
-            findall(Accessories, equip(accessories, Job, Accessories, _, _), ListofAcc),
-            concatList(ListofWeapons, ListofArmors, Concat1), 
-            concatList(Concat1, ListofAcc, Concat2), len(Concat2, EquipLen),
-            random(1, EquipLen, X), 
-            write('Congratulations! You\'ve got a '),
-            elmt(Concat2, X, Item), write(Item), nl,
-            equip(Type, Job, Item, _, _),
-            inventoryPlayer(ListWeapons, ListArmors, ListAcc, ListSpell),
-            ListWeapons = L1, ListArmors = L2, ListAcc = L3, ListSpell = L4,
-            retract(inventoryPlayer(_, _, _, _)),
-            (
-                Type = weapon -> 
-                    appendList(L1, Item, L_New), asserta(inventoryPlayer(L_New, L2, L3, L4));
-                Type = armor ->
-                    appendList(L2, Item, L_New), asserta(inventoryPlayer(L1, L_New, L3, L4));
-                Type = accessories ->
-                    appendList(L3, Item, L_New), asserta(inventoryPlayer(L1, L2, L_New, L4));
-                Type = spell ->
-                    appendList(L4, Item, L_New), asserta(inventoryPlayer(L1, L2, L3, L_New))
-            ),
-            write('The item is already sent to your inventory!'), !
+        (Choice =:= 1 ->
+            player(A1, Job, A3, A4, A5, A6, A7, A8, A9, A10, Money),nl,(
+                Money >= 100 ->(
+                    retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+                    Money2 is Money-100,
+                    asserta(player(A1, Job, A3, A4, A5, A6, A7, A8, A9, A10, Money2)),
+                    findall(Weapons, equip(weapon, Job, Weapons, _, _), ListofWeapons),
+                    findall(Armors , equip(armor, Job, Armors , _, _), ListofArmors),
+                    findall(Accessories, equip(accessories, Job, Accessories, _, _), ListofAcc),
+                    concatList(ListofWeapons, ListofArmors, Concat1), 
+                    concatList(Concat1, ListofAcc, Concat2), len(Concat2, EquipLen),
+                    random(1, EquipLen, X), 
+                    write('Congratulations! You\'ve got a '),
+                    elmt(Concat2, X, Item), write(Item), nl,
+                    equip(Type, Job, Item, _, _),
+                    inventoryPlayer(ListWeapons, ListArmors, ListAcc, ListSpell),
+                    ListWeapons = L1, ListArmors = L2, ListAcc = L3, ListSpell = L4,
+                    retract(inventoryPlayer(_, _, _, _)),
+                    (
+                        Type = weapon -> 
+                            appendList(L1, Item, L_New), asserta(inventoryPlayer(L_New, L2, L3, L4));
+                        Type = armor ->
+                            appendList(L2, Item, L_New), asserta(inventoryPlayer(L1, L_New, L3, L4));
+                        Type = accessories ->
+                            appendList(L3, Item, L_New), asserta(inventoryPlayer(L1, L2, L_New, L4));
+                        Type = spell ->
+                            appendList(L4, Item, L_New), asserta(inventoryPlayer(L1, L2, L3, L_New))
+                    ),
+                    write('The item is already sent to your inventory!'), ! 
+                );   
+                ( write('Your money isn\'t enough :('), nl)
+            )
+        );
+        ( 
+            Choice =:= 2 ->
+            player(A1, Job, A3, A4, A5, A6, A7, A8, A9, A10, Money),
+            retract(player(_, _, _, _, _, _, _, _, _, _, _)),(
+                (Money >= 50) -> (
+                    Money2 is Money-50,
+                    asserta(player(A1, Job, A3, A4, A5, A6, A7, A8, A9, A10, Money2)),
+                    inventoryPlayer(ListWeapons, ListArmors, ListAcc, ListSpell),
+                    ListWeapons = L1, ListArmors = L2, ListAcc = L3, ListSpell = L4,
+                    retract(inventoryPlayer(_, _, _, _)),
+                    write('Potions/Spells: '), nl, write('1. Heal Potion'), nl, write('> '), 
+                    read(Pil),(
+                        Pil = 1 -> appendList(L4, heal, L_New), asserta(inventoryPlayer(L1, L2, L3, L_New))
+                    )
+                );
+                (write('Your money isn\'t enough :('), nl, asserta(player(A1, Job, A3, A4, A5, A6, A7, A8, A9, A10, Money)))
+            )
+        )
     ).
 

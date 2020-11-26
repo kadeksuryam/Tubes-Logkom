@@ -5,7 +5,7 @@
 :- dynamic(statePlayer/1).
 /* berisi inventory player yang meliputi : listWeapon, listArmor, listAcc, listSpell */
 :- dynamic(inventoryPlayer/4).
-
+:- dynamic(currentEquip/3).
 
 /* Menampilkan status */
 status :-
@@ -29,7 +29,7 @@ job_stat :-
     write('Defense: 130'),nl,
     write('HP : 500')
     ,nl,nl,
-    write('2. Hawkeye '),nl,
+    write('2. Hawkeye '), nl,
     write('Job : Archer'),nl,
     write('Attack : 180'),nl,
     write('Defense: 100'),nl,
@@ -44,6 +44,11 @@ job_stat :-
 
 /* Menampilkan inventory user */
 infoinventory :-
+    write('Current Used Equipment: '), nl,
+    currentEquip(CurrWeapon, CurrArmor, CurrAcc),
+    write('Weapon: '), write(CurrWeapon), nl,
+    write('Armor: '), write(CurrArmor), nl,
+    write('Accessoris: '), write(CurrAcc), nl, nl,
     write('Your Inventory: '), nl,
     inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell),nl,
     write('Weapons: '), 
@@ -61,10 +66,94 @@ infoinventory :-
 inventory :-
     write('Hello! Welcome to your Inventory!'),nl,
     infoinventory, nl,
-    write('Do you want to throw some of your items? (y/n): '), 
+    write('What you want to do: '), nl,
+    write('1. Use/Change Items'), nl,
+    write('2. Throw Items'), nl,
+    write('Your Choice: '), 
     read(Pil),
     (
-        Pil = 'y',        
+        Pil = 1 -> (
+            inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell),
+            write('What items you want to use/change'),nl,
+            write('Item Type: '),
+            read(ItemType),
+            write('Item Name: '),
+            read(ItemName),
+            (
+                ItemType = weapon -> (
+                    
+                    member(ItemName, ListWeapon),
+                    equip(weapon, _, ItemName, Hp_item, Damage),
+                    player(A1, A2, Attack_player, A4, A5, Hp_player, A7, A8, A9, A10, A11),
+                    currentEquip(E1, E2, E3),(
+                        \+E1 = none ->(
+                            equip(weapon, _, E1, Hp_item_now, Damage_item_now),
+                            Hp_player_def is Hp_player-Hp_item_now, 
+                            Attack_player_def is Attack_player-Damage_item_now
+                        );
+                        (Hp_player_def is Hp_player, Attack_player_def is Attack_player)
+                    ),
+                    Attack2 is Attack_player_def+Damage, Hp_player2 is Hp_player_def+Hp_item,
+                    retract(currentEquip(_, _, _)),
+                    retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+                    asserta(player(A1, A2, Attack2, A4, A5, Hp_player2, A7, A8, A9, A10, A11)),
+                    asserta(currentEquip(ItemName, E2, E3)), write('Weapon changed to '), write(ItemName), nl, ! 
+                );
+                ItemType = armor -> (
+                    member(ItemName, ListWeapon),
+                    equip(armor, _, ItemName, Hp_item, Damage),
+                    player(A1, A2, Attack_player, A4, A5, Hp_player, A7, A8, A9, A10, A11),
+                    currentEquip(E1, E2, E3),(
+                        \+E2 = none ->(
+                            equip(weapon, _, E2, Hp_item_now, Damage_item_now),
+                            Hp_player_def is Hp_player-Hp_item_now, 
+                            Attack_player_def is Attack_player-Damage_item_now
+                        );
+                        (Hp_player_def is Hp_player, Attack_player_def is Attack_player)
+                    ),
+                    Attack2 is Attack_player_def+Damage, Hp_player2 is Hp_player_def+Hp_item,
+                    retract(currentEquip(_, _, _)),
+                    retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+                    asserta(player(A1, A2, Attack2, A4, A5, Hp_player2, A7, A8, A9, A10, A11)),
+                    asserta(currentEquip(E1, ItemName, E3)), write('Armor changed to '), write(ItemName), nl, !
+                );
+                ItemType = accessories -> (
+                    member(ItemName, ListWeapon),
+                    equip(accessories, _, ItemName, Hp_item, Damage),
+                    player(A1, A2, Attack_player, A4, A5, Hp_player, A7, A8, A9, A10, A11),
+                    currentEquip(E1, E2, E3),(
+                        \+E3 = none ->(
+                            equip(weapon, _, E3, Hp_item_now, Damage_item_now),
+                            Hp_player_def is Hp_player-Hp_item_now, 
+                            Attack_player_def is Attack_player-Damage_item_now
+                        );
+                        (Hp_player_def is Hp_player, Attack_player_def is Attack_player)
+                    ),
+                    Attack2 is Attack_player_def+Damage, Hp_player2 is Hp_player_def+Hp_item,
+                    retract(currentEquip(_, _, _)),
+                    retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+                    asserta(player(A1, A2, Attack2, A4, A5, Hp_player2, A7, A8, A9, A10, A11)),
+                    asserta(currentEquip(E1, E2, ItemName)), write('Accessories changed to '), write(ItemName), nl, !
+                );
+                ItemType = spell ->(
+                    member(ItemName, ListSpell),
+                    player(A1, A2, A3, A4, A5, Hp_player, A7, A8, A9, A10, A11),
+                    (
+                        ItemName = heal ->(
+                            write('Your Hp increased by 500!'), nl,
+                            Hp_player2 is Hp_player+500
+                        );
+                        (Hp_player2 is 0)
+                    ), inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell), delElmtList(ListSpell, ItemName, I4),
+                    retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+                    retract(inventoryPlayer(_, _, _, _)),
+                    asserta(inventoryPlayer(ListWeapon, ListArmor, ListAcc, I4)),
+                    asserta(player(A1, A2, A3, A4, A5, Hp_player2, A7, A8, A9, A10, A11)), !
+                )
+            )
+        );
+        /* Saat ngebuang items, dapet duit 50 gold untuk equipment, 25 gold untuk potion*/
+        Pil = 2 ->(        
             write('Item\'s Name: '),
             read(ItemName),
             inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell),
@@ -72,9 +161,26 @@ inventory :-
             delElmtList(ListArmor, ItemName, I2),
             delElmtList(ListAcc, ItemName, I3),
             delElmtList(ListSpell, ItemName, I4),
-            retractall(inventoryPlayer(_, _, _, _)),
+            member(ItemName, ListWeapon) -> (
+                MoneyAdd is 50
+            );
+            member(ItemName, ListArmor) -> (
+                MoneyAdd is 50
+            );
+            member(ItemName, ListAcc) -> (
+                MoneyAdd is 50
+            );
+            member(ItemName, ListSpell) -> (
+                MoneyAdd is 25
+            );
+            player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money),
+            Money2 is Money+MoneyAdd,
+            retract(player(_, _, _, _, _, _, _, _, _, _, _)),
+            retract(inventoryPlayer(_, _, _, _)),
             asserta(inventoryPlayer(I1, I2, I3, I4)),
+            asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money2)),
             infoinventory
+        )
     ).
 
 initJob(Username) :-
@@ -90,8 +196,12 @@ initJob(Username) :-
     ListArmor = [],
     ListAcc = [],
     ListSpell = [heal, heal, heal, heal, heal],
+    CurrWeapon = none,
+    CurrArmor = none,
+    CurrAcc = none,
     asserta(statePlayer(State)),
     asserta(inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell)),
+    asserta(currentEquip(CurrWeapon, CurrArmor, CurrAcc)),
     write('Your Choice: '), read(Job),
     (
         Job =:= 1 ->
