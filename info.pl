@@ -140,21 +140,3 @@ help :-
 
 /*========================== END Rule Info ==========================*/
 
-/* Mungkin dipindahkan ke map.pl */
-/* Menampilkan Shop */
-shop :-
-    write('Welcome to this Shop!'), nl,
-    write('1. You can get any equipments by doing \'Gacha\' (100 gold)'), nl,
-    write('Or you can buy these potions: '), nl,
-    write('2. Heal Potion (50 gold)'), nl,
-    write('3. Rage Potion (50 gold)'), nl,
-    write('Your choice : '), read(Choice),
-    (
-        Choice =:= 1 ->
-            player(_, Job, _, _, _, _, _, _, _, _),
-            findall(Weapons, equip(weapon, Job, Weapons, _, _), ListofWeapons),
-            findall(Armors , equip(armor, Job, Armors , _, _), ListofArmors),
-            findall(Accessories, equip(accessories, Job, Accessories, _, _), ListofAcc),
-            write(ListofWeapons), nl, write(ListofArmors), nl, write(ListofAcc), nl
-    ).
-

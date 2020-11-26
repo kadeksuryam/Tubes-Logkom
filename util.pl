@@ -24,11 +24,13 @@ elmt(List, Idx, Ans) :-
     Idx =\= 1, List = [_|T], 
     Idx2 is Idx-1,
     elmt(T, Idx2, Ans), !;
-    List = [H|_], Ans is H, !.
+    List = [H|_], Ans = H, !.
 
 wrtList([], 1) :- write('None'),nl, !.
+wrtList(List, 1) :- nl, List = [H|T],
+    write('1. '), write(H), nl, wrtList(T, 2), !.
 wrtList(List, It) :-
-    List = [H|T], nl,
+    List = [H|T],
     write(It), write('. '), write(H), nl, It2 is It+1, wrtList(T, It2), !;
     !.
 
@@ -38,4 +40,15 @@ delElmtList(List, X, Ans) :-
     List = [_|T], delElmtList(T, X, Ans), !;
     Ans = [],!. 
 
+concatList([], [], ListAns) :- ListAns = [], !.
+
+concatList([], List2, ListAns) :-
+    List2 = [H|T], concatList([], T, ListAns2), ListAns = [H|ListAns2], !.
+
+concatList(List1, List2, ListAns) :-
+    List1 = [H|T], concatList(T, List2, ListAns2), ListAns = [H|ListAns2], !.
+
+appendList([], X, Ans) :- Ans = [X],!.
+appendList(List, X, Ans) :-
+    List = [H|T], appendList(T, X, Ans2), Ans = [H|Ans2],!. 
 /*============ END LIST =========== */

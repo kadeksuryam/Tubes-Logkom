@@ -1,3 +1,4 @@
+
 /* Position represented in Coordinat x,y where mapsize >= x > 0 and mapsize <= y < 0 */
 :- dynamic(playerCoor/2).
 :- dynamic(storeCoor/2).
@@ -319,3 +320,47 @@ infomap :-
     write('Q is Quest position'), nl,
     write('S is Shop position'), nl,
     write('D is the final boss position'), nl.
+
+
+
+/* Mungkin dipindahkan ke map.pl */
+/* Menampilkan Shop */
+shop :-
+/*
+    playerCoor(X_player, Y_player),
+    storeCoor(X_store, Y_store),
+    (X_player = X_store), (Y_player = Y_store), */
+    write('Welcome to the Shop!'), nl,
+    write('1. You can get any equipments by doing \'Gacha\' (100 gold)'), nl,
+    write('Or you can buy these potions: '), nl,
+    write('2. Heal Potion (50 gold)'), nl,
+    write('3. Rage Potion (50 gold)'), nl,
+    write('Your choice : '), read(Choice),
+    (
+        Choice =:= 1 ->
+            player(_, Job, _, _, _, _, _, _, _, _),
+            findall(Weapons, equip(weapon, Job, Weapons, _, _), ListofWeapons),
+            findall(Armors , equip(armor, Job, Armors , _, _), ListofArmors),
+            findall(Accessories, equip(accessories, Job, Accessories, _, _), ListofAcc),
+            concatList(ListofWeapons, ListofArmors, Concat1), 
+            concatList(Concat1, ListofAcc, Concat2), len(Concat2, EquipLen),
+            random(1, EquipLen, X), 
+            write('Congratulations! You\'ve got a '),
+            elmt(Concat2, X, Item), write(Item), nl,
+            equip(Type, Job, Item, _, _),
+            inventoryPlayer(ListWeapons, ListArmors, ListAcc, ListSpell),
+            ListWeapons = L1, ListArmors = L2, ListAcc = L3, ListSpell = L4,
+            retract(inventoryPlayer(_, _, _, _)),
+            (
+                Type = weapon -> 
+                    appendList(L1, Item, L_New), asserta(inventoryPlayer(L_New, L2, L3, L4));
+                Type = armor ->
+                    appendList(L2, Item, L_New), asserta(inventoryPlayer(L1, L_New, L3, L4));
+                Type = accessories ->
+                    appendList(L3, Item, L_New), asserta(inventoryPlayer(L1, L2, L_New, L4));
+                Type = spell ->
+                    appendList(L4, Item, L_New), asserta(inventoryPlayer(L1, L2, L3, L_New))
+            ),
+            write('The item is already sent to your inventory!'), !
+    ).
+
