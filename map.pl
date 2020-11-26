@@ -11,6 +11,24 @@
 :- dynamic(isFight/1).
 /* Dungeon boss coordinate */
 dungeonBossCoor(20,-20).
+/* Other Object in map */
+                         tree(3,-7).
+            tree(2,-8).  tree(3,-8).  tree(4,-8).
+tree(1,-9). tree(2,-9).  tree(3,-9).  tree(4,-9). tree(5,-9).
+            tree(2,-10). tree(3,-10). tree(4,-10).
+                         tree(3,-11).
+
+                                boulder(15,-4).
+                boulder(14,-5). boulder(15,-5).
+boulder(13,-6). boulder(14,-6). boulder(15,-6). boulder(16,-6).
+                boulder(14,-7). boulder(15,-7). boulder(16,-7).
+                                boulder(15,-8).
+
+              pond(11,-13). pond(12,-13).
+              pond(11,-14). pond(12,-14). pond(13,-14).
+pond(10,-15). pond(11,-15). pond(12,-15). pond(13,-15).
+pond(10,-16). pond(11,-16). pond(12,-16).
+			  pond(11,-17). pond(12,-17). 
 
 /* map size 20x20 */
 pagar(0,_).
@@ -22,22 +40,48 @@ pagar(_,-21).
 /* initialize player, quest, and Store position on map */
 initmap :- 
 	/* Player position */
-	random(1,20,X),
-	random(-20,-1,Y),
+	random(6,14,X),
+	random(-7,0,Y),
 	retractall(playerCoor(_,_)),
 	asserta(playerCoor(X,Y)),
 	/* Store Position */
-	random(1,20,XS),
-	random(-20,-1,YS),
+    random(2,4,Num),
+    (
+        (
+            (Num =:= 2),random(2,9,XS),random(-19,-12,YS)
+        );
+        (
+            random(15,20,XS),random(-18,-11,YS)
+        )
+    ),
 	retractall(storeCoor(_,_)),
 	asserta(storeCoor(XS,YS)),
 	/* Quest Position */
-	random(1,20,XQ),
-	random(-20,-1,YQ),
-	(((XQ =:= XS),(YQ =:= YS),random(1,20,XQ1),random(-20,-1,YQ1));
-	((XQ1 is XQ+0),(YQ1 is YQ+0))),
+    random(2,4,Num1),
+	(
+        (
+            (Num1 =:= 2),random(2,9,XQ),random(-19,-12,YQ),
+            (((XQ =:= XS),(YQ =:= YS),random(2,9,XQ1),random(-19,-12,YQ1));
+	        ((XQ1 is XQ+0),(YQ1 is YQ+0)))
+        );
+        (
+            random(15,20,XQ),random(-18,-11,YQ),
+            (((XQ =:= XS),(YQ =:= YS),random(15,20,XQ1),random(-18,-11,YQ1));
+	        ((XQ1 is XQ+0),(YQ1 is YQ+0)))
+        )
+    ),
 	retractall(questCoor(_,_)),
-	asserta(questCoor(XQ1,YQ1)).
+	asserta(questCoor(XQ1,YQ1)),
+    /* Quest Info */
+    retractall(quest_info(_,_,_,_,_)),
+    retractall(quest_prog(_,_,_,_,_,_)),
+    random(1,21,V),
+    random(1,19,W),
+    random(1,16,X1),
+    random(1,16,Y1),
+    random(1,14,Z),
+    asserta(quest_info(V,W,X1,Y1,Z)),
+    asserta(quest_prog(V,W,X1,Y1,Z,1)),!.
 
 /* ----------- MOVEMENT ---------- */
 /* move north */
@@ -45,8 +89,9 @@ w :-
 	playerCoor(X,Y),
 	(
 		(
-			(Y =\= -1),(YY is Y+1),retract(playerCoor(X,Y)),asserta(playerCoor(X,YY)),
-			((storeCoor(X,Y),shop);(enemy_spotted);write('You move north'))
+			(Y =\= -1),(YY is Y+1),\+(tree(X,YY)),\+(boulder(X,YY)),\+(pond(X,YY)),
+            retract(playerCoor(X,Y)),asserta(playerCoor(X,YY)),
+			((storeCoor(X,YY),shop);(questCoor(X,YY),take_quest);(enemy_spotted);write('You move north'))
 		);
 		(
 			(Y == -1),write('You can\'t move north again')
@@ -57,8 +102,9 @@ a :-
 	playerCoor(X,Y),
 	(
 		(
-			(X =\= 1),(XX is X-1),retract(playerCoor(X,Y)),asserta(playerCoor(XX,Y)),
-			((storeCoor(X,Y),shop);(enemy_spotted);write('You move west'))		
+			(X =\= 1),(XX is X-1),\+(tree(XX,Y)),\+(boulder(XX,Y)),\+(pond(XX,Y)),
+            retract(playerCoor(X,Y)),asserta(playerCoor(XX,Y)),
+			((storeCoor(XX,Y),shop);(questCoor(XX,Y),take_quest);(enemy_spotted);write('You move west'))		
 		);
 		(
 			(X == 1),write('You can\'t move west again')
@@ -69,8 +115,9 @@ s :-
 	playerCoor(X,Y),
 	(
 		(
-			(Y =\= -20),(YY is Y-1),retract(playerCoor(X,Y)),asserta(playerCoor(X,YY)),
-			((storeCoor(X,Y),shop);(enemy_spotted);write('You move south'))
+			(Y =\= -20),(YY is Y-1),\+(tree(X,YY)),\+(boulder(X,YY)),\+(pond(X,YY)),
+            retract(playerCoor(X,Y)),asserta(playerCoor(X,YY)),
+			((storeCoor(X,YY),shop);(questCoor(X,YY),take_quest);(enemy_spotted);write('You move south'))
 		);
 		(
 			(Y == -20),write('You can\'t move south again')
@@ -81,8 +128,9 @@ d :-
 	playerCoor(X,Y),
 	(
 		(
-			(X =\= 20),(XX is X+1),retract(playerCoor(X,Y)),asserta(playerCoor(XX,Y)),
-			((storeCoor(X,Y),shop);(enemy_spotted);write('You move east'))
+			(X =\= 20),(XX is X+1),\+(tree(XX,Y)),\+(boulder(XX,Y)),\+(pond(XX,Y)),
+            retract(playerCoor(X,Y)),asserta(playerCoor(XX,Y)),
+			((storeCoor(XX,Y),shop);(questCoor(XX,Y),take_quest);(enemy_spotted);write('You move east'))
 		);
 		(
 			(X == 20),write('You can\'t move right again')
@@ -102,6 +150,9 @@ wrtmap(X,Y):-
 	endmap(X,Y);
 	pagar(X,Y),(X =\= 21),write('#'),(Z is X+1),wrtmap(Z,Y);
 	pagar(X,Y),(X == 21),write('#'),nl,(XX is 0),(YY is Y-1),wrtmap(XX,YY);
+    tree(X,Y),write('+'),(Z is X+1),wrtmap(Z,Y);
+    boulder(X,Y),write('&'),(Z is X+1),wrtmap(Z,Y);
+    pond(X,Y),write('#'),(Z is X+1),wrtmap(Z,Y);
 	playerCoor(X,Y),write('P'),(Z is X+1),wrtmap(Z,Y);
 	storeCoor(X,Y),write('S'),(Z is X+1),wrtmap(Z,Y);
 	questCoor(X,Y),write('Q'),(Z is X+1),wrtmap(Z,Y);
@@ -183,6 +234,21 @@ enemy_spotted :-
             next_action
         )
     ),!.
+	
+/* Take Quest */
+take_quest :-
+    infoQ,
+    write('Do you want to take this Quest?'),nl,
+    write('1. Take Quest'),nl,
+    write('2. Not Now'),nl,
+    write('> '),
+    read(Next),(
+        Next =:= 1 ->
+            startquest;
+        Next =:= 2 ->
+            map    
+    ).
+
 /* Next Action */
 next_action :-
     write('What would you do, adventurer?'), nl,

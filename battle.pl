@@ -1,4 +1,4 @@
-
+:- include('quest.pl').
 /*enemy(enemy_name,atk,def, hp_now, hp_max,exp,drop,atk_skill)*/
 /*player(Username, Job, Attack, dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)*/
 :- dynamic(isEnemySkill/1).
@@ -84,6 +84,7 @@ after_player_atk(_,Enemy_name) :-
     asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
     retract(enemy(_,_,_,_,_,_,_,_)),
     level_player(NewExp,Exp_next),
+	progress_quest(Enemy_name),questcleared,
     !.
 
 /* Enemy's HP > 0 */
