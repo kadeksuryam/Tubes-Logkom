@@ -16,7 +16,7 @@ status :-
     format('Attack: %d\n', [Attack]),
     format('Damage skill: %d\n',[Dmg_skill]),
     format('Defense: %d\n', [Defense]),
-    format('Hp: %d/%d\n', [Hp_now, Hp_max]),
+    format('Hp: %.2f/%.2f\n', [Hp_now, Hp_max]),
     format('Exp: %d/%d\n', [Exp_now, Exp_next]),
     format('Money: %d\n', [Money]), !.
 
@@ -89,7 +89,7 @@ initJob(Username) :-
     ListWeapon = [],
     ListArmor = [],
     ListAcc = [],
-    ListSpell = [],
+    ListSpell = [heal, heal, heal, heal, heal],
     asserta(statePlayer(State)),
     asserta(inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell)),
     write('Your Choice: '), read(Job),
