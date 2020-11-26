@@ -65,11 +65,11 @@ enemy_skill(goblin, provoke, 80).
 enemy_skill(wyvern, lockdown, 90).
 enemy_skill(boss, earthquake, 2000).
 
-get_exp(slime,30).
-get_exp(kobold,40).
-get_exp(lamia,50).
-get_exp(goblin,60).
-get_exp(wyvern,70).
+get_exp(slime,15).
+get_exp(kobold,20).
+get_exp(lamia,25).
+get_exp(goblin,30).
+get_exp(wyvern,35).
 
 drop(slime, hp_potion).
 drop(kobold, hp_potion).

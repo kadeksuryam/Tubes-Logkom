@@ -1,4 +1,5 @@
 
+
 :- include('battle.pl').
 /* Position represented in Coordinat x,y where mapsize >= x > 0 and mapsize <= y < 0 */
 :- dynamic(playerCoor/2).
@@ -217,32 +218,35 @@ encounter(EnemyName,Output) :-
     random(1,100,N),
     (
         (
-            /* enemy name : Slime ; Encounter Rate = 50% */
+            /* enemy name : Slime ; Encounter Rate = 30% */
             (EnemyName = 'slime'),
-            (((mod(N,2) =:= 0),(Output is 1));(Output is 0))
+            (((N < 90),(mod(N,3) =:= 0),(Output is 1));(Output is 0))
         );
         (
-            /* enemy name : Kobold ; Encounter Rate = 47,5% */
+            /* enemy name : Kobold ; Encounter Rate = 27,5% */
             (EnemyName = 'kobold'),
-            (((N < 96),(mod(N,2) =:= 0),(Output is 1));(Output is 0))
+            (((N < 93),(mod(N,4) =:= 0),(Output is 1));(Output is 0))
         );
         (
-            /* enemy name : Lamia; Encounter Rate = 45% */
+            /* enemy name : Lamia; Encounter Rate = 25% */
             (EnemyName = 'lamia'),
-            (((N < 90),(mod(N,2) =:= 0),(Output is 1));(Output is 0))
+            (X is mod(N,4)),
+            (((X =:= 2),(Output is 1));(Output is 0))
         );
         (
-            /* enemy name : Goblin ; Encounter Rate = 42,5% */
+            /* enemy name : Goblin ; Encounter Rate = 22,5% */
             (EnemyName = 'goblin'),
-            (((N < 86),(mod(N,2) =:= 0),(Output is 1));(Output is 0))
+            (((N < 90),(mod(N,5) =:= 0),(Output is 1));(Output is 0))
         );
         (
-            /* enemy name : Wyvern ; Encounter Rate = 40% */
+            /* enemy name : Wyvern ; Encounter Rate = 20% */
             (EnemyName = 'wyvern'),
-            (X is mod(N,2)),
-            (((N < 80),(X =:= 0),(Output is 1));(Output is 0))
+            (X is mod(N,5)),
+            (((X =:= 2),(Output is 1));(Output is 0))
         )
     ),!.
+
+
 
 isSlimeArea(X,Y) :-
     spawn_area(slime,X1,X2,Y1,Y2),
