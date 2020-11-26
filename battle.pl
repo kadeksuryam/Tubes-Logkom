@@ -4,6 +4,7 @@
 :- dynamic(isEnemySkill/1).
 :- dynamic(isFight/1).
 :- dynamic(isSkill/1).
+:- dynamic(isRun/1).
 
 
 run :-
@@ -26,8 +27,8 @@ run :-
     isEnemyAlive(_),
     run_prob(P),
     P >= 6,
-    write('you success escape from the enemy.'),
-    retract(peluang(P)),
+    write('you success escape from the enemy.'),nl,
+    retract(run_prob(P)),
     retract(isEnemyAlive(_)),
     retract(enemy(_, _, _, _, _, _, _, _)),
     (
@@ -45,70 +46,89 @@ fight :-
     isFight(_),
     isEnemyAlive(_),
     write('the battle is ongoing,'), nl,
+    ni,
     !.
 
 fight :-
     asserta(isRun(1)),
     asserta(isFight(1)),
-    asserta(isSkill(1)),
     isEnemyAlive(_),
+    asserta(isSkill(1)),
     asserta(isEnemySkill(1)),
     ni,
     !.
 
 ni :- 
-    write("Choose :"),nl,
-    write('player_atk.'),nl,
-    write('OR'),nl,
-    write('player_skill.'),nl,
+    write('Make a decision quickly, Adventurer!!!'),nl,
+    write('1. player_atk.'),nl,
+    write('2. player_skill.'),nl,
+    write('> '),
+    read(Decision),(
+        Decision =:= 2 ->
+            player_skill;
+        Decision =:= 1 ->
+            player_atk    
+    ).
     !.
 
 
 /* ~ After Player Atk ~ */
+/* Enemy's HP <= 0 */
+after_player_atk :-
+    player(_, _, _, _, _, _, _, Exp_now, _, Level, Money),
+    enemy(Enemy_name, _, _, EnemyHp, _, _, _, _),
+    /*enemy(Enemy_name, _, _, EnemyHp, _, _, Drop, _),*/
+    EnemyHp =< 0,
+    write(Enemy_name),write(' is defeated'),nl,
+    /* Ambil drop ITEM blm */
+    retract(isFight(_)),
+    retract(isEnemyAlive(_)),
+    NewMoney is (Money + 15),
+    NewExp is (Exp_now  + 15*Level),
+    retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+    asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
+    !.
+
 /* Enemy's HP > 0 */
 after_player_atk :-
-    enemy(enemy_name,_,_,Enemy_Hp,_,_,_,_),
-    Enemy_Hp > 0,
-    write('Remaining Hp'), write(enemy_name), write(' : '), write(Enemy_Hp),
+    enemy(Enemy_name, _, _, EnemyHp, _, _, _, _),
+    EnemyHp > 0,
+    write('Remaining Hp '), write(Enemy_name), write(' : '), write(EnemyHp),nl,
     write('Enemy turn'),nl,
     enemy_turn,
     !.
-/* Enemy's HP <= 0 */
-after_player_atk :-
-    enemy(enemy_name,_,_,Enemy_Hp,_,_,drop,_),
-    Enemy_Hp =< 0,
-    write(enemy_name),write(' defeated'),
-    !.
-    /* Ambil drop ITEM blm */
 /*End ~ After Player Atk ~ */
 
 /* ~ After Enemy Atk ~ */
-/* Player's HP > 0 */
-after_enemy_atk :-
-    player(Username, _, _,_,_, Hp_now, _, _, _, _, _),
-    Hp_now > 0,
-    write('Remaining Hp'), write(Username), write(' : '), write(Hp_now),
-    !.
+
 /* Player's HP <= 0 */
 after_enemy_atk :-
     player(_, _, _,_,_, Hp_now, _, _, _, _, _),
     Hp_now =< 0,
-    write('You Lose !!!'),
+    write('You Lose !!!'),nl,
+    !.
+
+/* Player's HP > 0 */
+after_enemy_atk :-
+    player(Username, _, _,_,_, Hp_now, _, _, _, _, _),
+    Hp_now > 0,
+    write('Remaining Hp '), write(Username), write(' : '), write(Hp_now),nl,
+    write('Your turn: '), nl, ni,
     !.
 
 /* End ~ After Enemy Atk ~ */
 player_atk :- 
     \+ isEnemyAlive(_),
-    write('you haven\'t found the enemy'),
+    write('you haven\'t found the enemy'),nl,
     !.
     
 player_atk :-
     isEnemyAlive(_),
-    player(Username, _, Attack,_,_, _, _, _, _, _, _),
-    enemy(_,_,def,Hp_now,_,_,_,_),
-    NeoEnemyHealth is (Hp_now - (Attack - ((0.2)*def))),
-    retract(enemy(enemy_name,atk,def, hp_now, hp_max,get_exp,drop)),
-    asserta(enemy(enemy_name,atk,def, NeoEnemyHealth, hp_max,get_exp,drop)),
+    player(Username,_, Attack,_,_,_,_,_,_,_,_),
+    enemy(_,_,Def,Hp_now,_,_,_,_),
+    NewEnemyHealth is (Hp_now - (Attack - (0.2*Def))),
+    retract(enemy(Enemy_name, Atk, Def, Hp_now, Hp_max, Get_exp, Drop, Atk_skill)),
+    asserta(enemy(Enemy_name, Atk, Def, NewEnemyHealth, Hp_max, Get_exp, Drop, Atk_skill)),
     write(Username), write(' use basic attack !'),nl,
     after_player_atk,
     !.
@@ -120,18 +140,18 @@ player_skill :-
 
 player_skill :-
     \+ isSkill(_),
-    write('skill is on cooldown, choose another one !'),nl,
+    write('skill is on cooldown, choose another one !'),nl,ni,
     !.
 
 player_skill :-
     isEnemyAlive(_),
     isSkill(_),
-    player(Username,Job,_,dmg_skill,_, _, _, _, _, _, _),
-    enemy(_,_,def,Hp_now,_,_,_,_),
-    NeoEnemyHealth is (Hp_now - (dmg_skill - ((0.2)*def))),
-    retract(enemy(enemy_name,atk,def, hp_now, hp_max,get_exp,drop,atk_skill)),
-    asserta(enemy(enemy_name,atk,def, NeoEnemyHealth, hp_max,get_exp,drop,atk_skill)),
-    player_skill(Job, Skill_name),
+    player(Username,Job,_,Dmg_skill,_,_,_,_,_,_,_),
+    enemy(_,_,Def,Hp_now,_,_,_,_),
+    NewEnemyHealth is (Hp_now - (Dmg_skill - (0.2*Def))),
+    retract(enemy(Enemy_name, Atk, Def, Hp_now, Hp_max, Get_exp, Drop, Atk_skill)),
+    asserta(enemy(Enemy_name, Atk, Def, NewEnemyHealth, Hp_max, Get_exp, Drop, Atk_skill)),
+    player_skill(Job, Skill_name, _),
     write(Username), write(' use '), write(Skill_name), write('!!!'),nl,
     retract(isSkill(_)),
     after_player_atk,
@@ -145,12 +165,12 @@ enemy_turn :-
     !.
 
 enemy_atk :-
-    enemy(enemy_name,atk_enemy,_,_,_,_,_),
+    enemy(Enemy_name,Atk_enemy,_,_,_,_,_,_),
     player(_, _, _,_, Defense, Hp_now, Hp_max, _, _, _, _),
-    NeoHealth is (Hp_now-(atk_enemy-(0.1*Defense))),
-    retract(player(Username, Job, Attack,dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
-    asserta(player(Username, Job, Attack, dmg_skill,Defense, NeoHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
-    write(enemy_name), write(' use basic attack !'), nl,
+    NewHealth is (Hp_now-(Atk_enemy-(0.1*Defense))),
+    retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+    asserta(player(Username, Job, Attack, Dmg_skill, Defense, NewHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
+    write(Enemy_name), write(' use basic attack !'), nl,
     after_enemy_atk,
     !.
 
@@ -159,15 +179,13 @@ enemy_skill :-
     enemy_atk.
 
 enemy_skill :-
-    enemy(enemy_name,atk_enemy,_,_,_,_,atk_skill),
+    enemy(Enemy_name,_,_,_,_,_,_,Atk_skill),
     player(_, _, _,_, Defense, Hp_now, Hp_max, _, _, _, _),
-    NeoHealth is (Hp_now - (atk_skill-(0.1*Defense))),
-    retract(player(Username, Job, Attack, dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
-    asserta(player(Username, Job, Attack, dmg_skill,Defense, NeoHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
-    enemy_skill(enemy_name, X,_),
-    write(enemy_name), write(' use '), write(X), write('!!!'), nl,
+    NewHealth is (Hp_now - (Atk_skill-(0.1*Defense))),
+    retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+    asserta(player(Username, Job, Attack, Dmg_skill, Defense, NewHealth, Hp_max, Exp_now, Exp_next, Level, Money)),
+    enemy_skill(Enemy_name, X,_),
+    write(Enemy_name), write(' use '), write(X), write('!!!'), nl,
     retract(isEnemySkill(_)),
     after_enemy_atk,
     !.
-
-
