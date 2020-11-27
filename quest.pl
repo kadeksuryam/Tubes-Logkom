@@ -3,7 +3,6 @@
 
 updatequest :- 
     retractall(quest_info(_,_,_,_,_)),
-    retractall(questCoor(_,_)),
     retractall(quest_prog(_,_,_,_,_,_)),
     random(1,21,V),
     random(1,19,W),
@@ -78,12 +77,13 @@ questcleared :-
 
 startquest :-
     quest_info(V,W,X,Y,Z),
+	retractall(questCoor(_,_)),
     retract(quest_prog(V,W,X,Y,Z,1)),
     asserta(quest_prog(V,W,X,Y,Z,0)),!.
 
 infoQ :-
     quest_info(V,W,X,Y,Z),
-    quest_prog(V2,W2,X2,Y2,Z2,_),
+    quest_prog(V2,W2,X2,Y2,Z2,0),
     (V1 is V-V2),(W1 is W-W2),(X1 is X-X2),(Y1 is Y-Y2),(Z1 is Z-Z2),
     write('Active Quest :'),nl,
     write(' _________________________'),nl,
