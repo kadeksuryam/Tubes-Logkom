@@ -260,7 +260,23 @@ enemy_spotted :-
             asserta(isEnemyAlive(1)),
 			write('You found a slime!'),nl,
             next_action
-        )
+        );
+
+        (
+            dungeonBossCoor(X_boss,Y_boss),
+            (X =:= X_boss), (Y =:= Y_boss),
+            stat_enemy(boss, Attack, Defense, Hp_max),
+            enemy_skill(boss, earthquake, Attack_skill),
+            drop(boss, Item_drop),
+            TempExp is 0,
+            Enemy_name = 'boss',
+            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,TempExp,Item_drop,Attack_skill)),
+            asserta(isEnemyAlive(1)),
+			write('WOAH !!!'),nl,
+            sleep(1),
+			write('You found BOSS, Be careful !!!'),nl,
+            next_action
+        ) 
     ),!.
 	
 /* Take Quest */

@@ -3,6 +3,7 @@
 
 /* Main control */
 start :-
+    title,
     retractall(player(_, _, _, _, _, _, _, _, _, _)),
     write('Welcome to This Game!'), nl,
     write('1. Load save file'), nl,

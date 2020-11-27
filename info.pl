@@ -76,6 +76,7 @@ drop(kobold, hp_potion).
 drop(lamia, def_potion).
 drop(goblin, atk_potion).
 drop(wyvern, atk_potion).
+drop(boss, champion).
 
 /* =========== END Fakta-fakta Enemy ============ */
 
@@ -136,7 +137,7 @@ help :-
     write('S. --> move down'),nl,
     write('D. --> move right'),nl,
     write('status. --> open current stat'), nl,
-    write('quit. --> quit the game'), nl.
+    write('quit. --> quit the game'), nl,nl.
 
 /* Menampilkan Info Item-Item */
 

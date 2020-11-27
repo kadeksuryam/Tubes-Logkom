@@ -71,6 +71,16 @@ player_turn(Count) :-
 
 /* Enemy's HP <= 0 */
 
+after_player_atk(_,boss) :-
+    enemy(boss, _, _, EnemyHp, _, _, _, _),
+    EnemyHp =< 0,
+    retract(isFight(_)),
+    retract(isEnemyAlive(_)),
+    retractall(enemy(_,_,_,_,_,_,_,_)),
+    write('BOSS is defeated'),nl,nl,
+    write('You WIN !!!'),nl,
+    halt(0).
+
 after_player_atk(_,Enemy_name) :-
     enemy(Enemy_name, _, _, EnemyHp, _, ExpGet, _, _),
     EnemyHp =< 0,
@@ -87,7 +97,6 @@ after_player_atk(_,Enemy_name) :-
     progress_quest(Enemy_name),
     (questcleared;\+(questcleared)),
     !.
-
 /* Enemy's HP > 0 */
 after_player_atk(Count,Enemy_name) :-
     enemy(Enemy_name, _, _, EnemyHp, _, _, _, _),
@@ -106,7 +115,8 @@ after_enemy_atk(_) :-
     isEnemyAlive(_),
     player(_, _, _,_,_, Hp_now, _, _, _, _, _),
     Hp_now =< 0,
-    write('You Lose !!!'),nl,    
+    write('You Lose !!!'),nl,
+    halt(0),
     !.
 
 /* Player's HP > 0 */
