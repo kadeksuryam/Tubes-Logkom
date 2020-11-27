@@ -3,7 +3,6 @@
 
 updatequest :- 
     retractall(quest_info(_,_,_,_,_)),
-    retractall(questCoor(_,_)),
     retractall(quest_prog(_,_,_,_,_,_)),
     random(1,21,V),
     random(1,19,W),
@@ -78,19 +77,21 @@ questcleared :-
 
 startquest :-
     quest_info(V,W,X,Y,Z),
+	retractall(questCoor(_,_)),
     retract(quest_prog(V,W,X,Y,Z,1)),
     asserta(quest_prog(V,W,X,Y,Z,0)),!.
 
 infoQ :-
     quest_info(V,W,X,Y,Z),
-    quest_prog(V2,W2,X2,Y2,Z2,_),
+	playerCoor(J,L),
+    ((questCoor(J,L),quest_prog(V2,W2,X2,Y2,Z2,1));quest_prog(V2,W2,X2,Y2,Z2,0)),
     (V1 is V-V2),(W1 is W-W2),(X1 is X-X2),(Y1 is Y-Y2),(Z1 is Z-Z2),
     write('Active Quest :'),nl,
     write(' _________________________'),nl,
     write('|                         |'),nl,
     (
         (
-            (V =< 10),(V1 =< 10),
+            (V < 10),(V1 < 10),
             format('|  Slime  : ~w/~w   killed  | ~n', [V1, V])
         );
         (
@@ -103,7 +104,7 @@ infoQ :-
     ),
     (
         (
-            (W =< 10),(W1 =< 10),
+            (W < 10),(W1 < 10),
             format('|  Kobold : ~w/~w   killed  | ~n', [W1, W])
         );
         (
@@ -116,7 +117,7 @@ infoQ :-
     ),
     (
         (
-            (X =< 10),(X1 =< 10),
+            (X < 10),(X1 < 10),
             format('|  Lamia  : ~w/~w   killed  | ~n', [X1, X])
         );
         (
@@ -129,7 +130,7 @@ infoQ :-
     ),
     (
         (
-            (Y =< 10),(Y1 =< 10),
+            (Y < 10),(Y1 < 10),
             format('|  Goblin : ~w/~w   killed  | ~n', [Y1, Y])
         );
         (
@@ -142,7 +143,7 @@ infoQ :-
     ),
     (
         (
-            (Z =< 10),(Z1 =< 10),
+            (Z < 10),(Z1 < 10),
             format('|  Wyvern : ~w/~w   killed  | ~n', [Z1, Z])
         );
         (
