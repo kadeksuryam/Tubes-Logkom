@@ -76,15 +76,16 @@ after_player_atk(_,Enemy_name) :-
     EnemyHp =< 0,
     retract(isFight(_)),
     retract(isEnemyAlive(_)),
-    write(Enemy_name),write(' is defeated'),nl,
-    retract(enemy(_,_,_,_,_,_,_,_)),
+    retractall(enemy(_,_,_,_,_,_,_,_)),
     player(_, _, _, _, _, _, _, Exp_now, _, Level, Money),
     NewMoney is (Money + 15),
     NewExp is (Exp_now  + ExpGet),
     retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
-	progress_quest(Enemy_name),questcleared,
-    level_player(NewExp,Exp_next),
+    write(Enemy_name),write(' is defeated'),nl,
+    level_player,
+    progress_quest(Enemy_name),
+    (questcleared;\+(questcleared)),
     !.
 
 /* Enemy's HP > 0 */
@@ -212,28 +213,21 @@ enemy_skill(Count,Enemy_name) :-
     !.
 
 
-level_player(Exp_now,Exp_next) :- 
-    Exp_now >= Exp_next,
+level_player :- 
     player(_, _, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now,Exp_next, Level, _),
-    TempLevel is (Level + 1),
-    TempHP_max is Hp_max + 500,
-    TempAtk is Attack + 30,
-    TempDmg_skill is Dmg_skill + 10,
-    TempDef is Defense + 15,
-    TempExp_next is 2*Exp_next,
-    retract(player(Username, Job, Attack, Dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
-    asserta(player(Username, Job, TempAtk, TempDmg_skill,TempDef, TempHP_max, TempHP_max, Exp_now, TempExp_next, TempLevel, Money)),
-    write('You have Leveled Up!!!'),nl,
+    (   
+        Exp_now >= Exp_next,
+        TempLevel is (Level + 1),
+        TempHP_max is Hp_max + 500,
+        TempAtk is Attack + 30,
+        TempDmg_skill is Dmg_skill + 10,
+        TempDef is Defense + 15,
+        TempExp_next is 2*Exp_next,
+        retract(player(Username, Job, Attack, Dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+        asserta(player(Username, Job, TempAtk, TempDmg_skill,TempDef, TempHP_max, TempHP_max, Exp_now, TempExp_next, TempLevel, Money)),
+        write('You have Leveled Up!!!'),nl
+    );
+    (
+        break
+    ),
     !.
-
-level_enemy :-
-    enemy(_,Atk,Def, Hp_now, Hp_max, Get_Exp, _, Atk_skill),
-    TempAtk is Atk + 30,
-    TempDef is Def + 30,
-    TempHP_max is Hp_max + 300,
-    TempGet_exp is Get_Exp + 5,
-    TempAtk_skill is Atk + 30,
-    retract(enemy(Enemy_name,Atk,Def, Hp_now, Hp_max, Get_Exp, Drop, Atk_skill)),
-    asserta(enemy(Enemy_name, TempAtk, TempDef, Hp_now, TempHP_max, TempGet_exp, Drop, TempAtk_skill)),
-    !.
-    
