@@ -84,6 +84,7 @@ after_player_atk(_,Enemy_name) :-
     retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
 	progress_quest(Enemy_name),questcleared,
+    level_player,
     !.
 
 /* Enemy's HP > 0 */
