@@ -82,6 +82,7 @@ after_player_atk(_,boss) :-
     halt(0).
 
 after_player_atk(_,Enemy_name) :-
+    quest_prog(_,_,_,_,_,1),
     enemy(Enemy_name, _, _, EnemyHp, _, ExpGet, _, _),
     EnemyHp =< 0,
     retract(isFight(_)),
@@ -94,9 +95,32 @@ after_player_atk(_,Enemy_name) :-
     asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
     write(Enemy_name),write(' is defeated'),nl,
     level_player,
-    progress_quest(Enemy_name),
-    (questcleared;\+(questcleared)),
     !.
+
+after_player_atk(_,Enemy_name) :-
+    enemy(Enemy_name, _, _, EnemyHp, _, ExpGet, _, _),
+    EnemyHp =< 0,
+    retract(isFight(_)),
+    retract(isEnemyAlive(_)),
+    retractall(enemy(_,_,_,_,_,_,_,_)),
+    player(_, _, _, _, _, _, _, Exp_now, _, Level, Money),
+    NewMoney is (Money + 15),
+    NewExp is (Exp_now  + ExpGet),
+    retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
+    asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
+    write(Enemy_name),write(' is defeated'),nl,
+    (
+        (quest_prog(_,_,_,_,_,0)),
+        level_player
+    );
+    (
+        (quest_prog(_,_,_,_,_,1)),
+        progress_quest(Enemy_name),
+        (questcleared;\+(questcleared)),
+        level_player
+    ),
+    !.
+
 /* Enemy's HP > 0 */
 after_player_atk(Count,Enemy_name) :-
     enemy(Enemy_name, _, _, EnemyHp, _, _, _, _),

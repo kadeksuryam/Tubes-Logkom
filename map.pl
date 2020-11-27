@@ -272,7 +272,7 @@ enemy_spotted :-
             Enemy_name = 'boss',
             asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,TempExp,Item_drop,Attack_skill)),
             asserta(isEnemyAlive(1)),
-			write('WOAH !!!'),nl,
+			write(' WOAHHH !!!'),nl,
             sleep(1),
 			write('You found BOSS, Be careful !!!'),nl,
             next_action
@@ -382,6 +382,14 @@ isWyvernArea(X,Y) :-
     spawn_area(wyvern,X1,X2,Y1,Y2),
     (X >= X1),(X =< X2),
     (Y =< Y1),(Y >= Y2),!.
+
+
+/* ---------- BONUS SYSTEM ----------- */
+/* Teleportation System */
+teleport(X,Y) :- 
+	(((X >= 21);(X =< 0);(Y =< -21);(Y >= 0)),write('Invalid Coordinate!!!'),!);
+	(inventory(teleport_rune,N),(N > 0),retract(playerCoor(_,_)),asserta(playerCoor(X,Y)),!);
+	write('You don\'t have any Teleportation Rune in your inventory.').
 
 /* Info map */
 infomap :-
