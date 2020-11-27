@@ -164,6 +164,7 @@ wrtmap(X,Y):-
 /* ---------- Encountering Enemy System ---------- */
 enemy_spotted :-
     playerCoor(X,Y),
+    player(_, _, _, _, _, _, _, _, _, Level, _),
     (
         (
             isWyvernArea(X,Y),
@@ -173,7 +174,7 @@ enemy_spotted :-
             drop(wyvern,Item_drop),
             enemy_skill(wyvern, lockdown, Attack_skill),
             Enemy_name = 'wyvern',
-            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,Exp,Item_drop,Attack_skill)),
+            asserta(enemy(Enemy_name,Attack*Level,Defense*Level, Hp_max*Level, Hp_max*Level,Exp*Level,Item_drop,Attack_skill*Level)),
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a wyvern!'),nl,
@@ -187,7 +188,7 @@ enemy_spotted :-
             drop(goblin,Item_drop),
             enemy_skill(goblin, provoke, Attack_skill),
             Enemy_name = 'goblin',
-            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,Exp,Item_drop,Attack_skill)),
+            asserta(enemy(Enemy_name,Attack*Level,Defense*Level, Hp_max*Level, Hp_max*Level,Exp*Level,Item_drop,Attack_skill*Level)),
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a goblin!'),nl,
@@ -201,7 +202,7 @@ enemy_spotted :-
             drop(lamia,Item_drop),
             enemy_skill(lamia, kumiaa, Attack_skill),
             Enemy_name = 'lamia',
-            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,Exp,Item_drop,Attack_skill)),
+            asserta(enemy(Enemy_name,Attack*Level,Defense*Level, Hp_max*Level, Hp_max*Level,Exp*Level,Item_drop,Attack_skill*Level)),
             (Output =:= 1),
             asserta(isEnemyAlive(1)), 
 			write('You found a lamia!'),nl,
@@ -215,7 +216,7 @@ enemy_spotted :-
             drop(kobold,Item_drop),
             enemy_skill(kobold, bold, Attack_skill),
             Enemy_name = 'kobold',
-            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,Exp,Item_drop,Attack_skill)),
+            asserta(enemy(Enemy_name,Attack*Level,Defense*Level, Hp_max*Level, Hp_max*Level,Exp*Level,Item_drop,Attack_skill*Level)),
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a kobold!'),nl,
@@ -229,7 +230,7 @@ enemy_spotted :-
             drop(slime,Item_drop),
             enemy_skill(slime, gloomy, Attack_skill),
             Enemy_name = 'slime',
-            asserta(enemy(Enemy_name,Attack,Defense, Hp_max, Hp_max,Exp,Item_drop,Attack_skill)),
+            asserta(enemy(Enemy_name,Attack*Level,Defense*Level, Hp_max*Level, Hp_max*Level,Exp*Level,Item_drop,Attack_skill*Level)),
             (Output =:= 1),
             asserta(isEnemyAlive(1)),
 			write('You found a slime!'),nl,
