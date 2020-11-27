@@ -74,16 +74,15 @@ player_turn(Count) :-
 after_player_atk(_,Enemy_name) :-
     enemy(Enemy_name, _, _, EnemyHp, _, ExpGet, _, _),
     EnemyHp =< 0,
-    player(_, _, _, _, _, _, _, Exp_now, _, Level, Money),
-    write(Enemy_name),write(' is defeated'),nl,
     retract(isFight(_)),
     retract(isEnemyAlive(_)),
+    write(Enemy_name),write(' is defeated'),nl,
+    retract(enemy(_,_,_,_,_,_,_,_)),
+    player(_, _, _, _, _, _, _, Exp_now, _, Level, Money),
     NewMoney is (Money + 15),
     NewExp is (Exp_now  + ExpGet),
     retract(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, NewExp, Exp_next, Level, NewMoney)),
-    retract(enemy(_,_,_,_,_,_,_,_)),
-    level_player(NewExp,Exp_next),
 	progress_quest(Enemy_name),questcleared,
     !.
 
@@ -93,7 +92,7 @@ after_player_atk(Count,Enemy_name) :-
     EnemyHp > 0,
     write('Remaining Hp '), write(Enemy_name), write(' : '), write(EnemyHp),nl,
     write('Enemy turn'),nl,
-    enemy_turn(Count),
+    enemy_turn(Count,Enemy_name),
     !.
 
 /*End ~ After Player Atk ~ */
@@ -102,6 +101,7 @@ after_player_atk(Count,Enemy_name) :-
 
 /* Player's HP <= 0 */
 after_enemy_atk(_) :-
+    isEnemyAlive(_),
     player(_, _, _,_,_, Hp_now, _, _, _, _, _),
     Hp_now =< 0,
     write('You Lose !!!'),nl,    
@@ -109,6 +109,7 @@ after_enemy_atk(_) :-
 
 /* Player's HP > 0 */
 after_enemy_atk(Count) :-
+    isEnemyAlive(_),
     player(Username, _, _,_,_, Hp_now, _, _, _, _, _),
     Hp_now > 0,
     write('Remaining Hp '), write(Username), write(' : '), write(Hp_now),nl,
@@ -117,12 +118,12 @@ after_enemy_atk(Count) :-
 
 /* End ~ After Enemy Atk ~ */
 player_atk(_) :- 
-    \+ isEnemyAlive(_),
+    \+ isEnemyAlive(1),
     write('you haven\'t found the enemy'),nl,
     !.
     
 player_atk(Count) :-
-    isEnemyAlive(_),
+    isEnemyAlive(1),
     player(Username,_, Attack,_,_,_,_,_,_,_,_),
     enemy(_,_,Def,Hp_now,_,_,_,_),
     NewEnemyHealth is (Hp_now - (Attack - (0.2*Def))),
@@ -133,7 +134,7 @@ player_atk(Count) :-
     !.
 
 player_skill(_) :-
-    \+ isEnemyAlive(_),
+    \+ isEnemyAlive(1),
     write('you haven\'t found the enemy'),
     !.
 
@@ -156,28 +157,34 @@ player_skill(Count) :-
     after_player_atk(Count,Enemy_name),
     !.
 
-enemy_turn(Count) :-
+enemy_turn(Count,Enemy_name) :-
+    isEnemyAlive(_),
     Count < 3, 
     Newcount is Count + 1,
-    isEnemyAlive(1),
     random(1,5,X),
     (X =< 3 ->
-        enemy_atk(Newcount); enemy_skill(Newcount)
+        enemy_atk(Newcount,Enemy_name); enemy_skill(Newcount,Enemy_name)
     ),
     !.
 
-enemy_turn(Count) :-
+enemy_turn(Count,Enemy_name) :-
+    isEnemyAlive(_),
     Count >= 3, 
     asserta(isSkill(1)),
     Newcount is 0,
-    isEnemyAlive(1),
     random(1,5,X),
     (X =< 3 ->
-        enemy_atk(Newcount); enemy_skill(Newcount)
+        enemy_atk(Newcount,Enemy_name); enemy_skill(Newcount,Enemy_name)
     ),
     !.
 
-enemy_atk(Count) :-
+enemy_atk(_,_) :-
+    \+isEnemyAlive(_),
+    fail,
+    !.
+
+enemy_atk(Count,Enemy_name) :-
+    isEnemyAlive(_),
     enemy(Enemy_name,Atk_enemy,_,_,_,_,_,_),
     player(_, _, _,_, Defense, Hp_now, Hp_max, _, _, _, _),
     NewHealth is (Hp_now-(Atk_enemy-(0.1*Defense))),
@@ -187,11 +194,11 @@ enemy_atk(Count) :-
     after_enemy_atk(Count),
     !.
 
-enemy_skill(_) :-
+enemy_skill(_,_) :-
     \+ isEnemySkill(_),
-    enemy_atk(_).
+    enemy_atk(_,_).
 
-enemy_skill(Count) :-
+enemy_skill(Count,Enemy_name) :-
     enemy(Enemy_name,_,_,_,_,_,_,Atk_skill),
     player(_, _, _,_, Defense, Hp_now, Hp_max, _, _, _, _),
     NewHealth is (Hp_now - (Atk_skill-(0.1*Defense))),
@@ -216,7 +223,6 @@ level_player(Exp_now,Exp_next) :-
     retract(player(Username, Job, Attack, Dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
     asserta(player(Username, Job, TempAtk, TempDmg_skill,TempDef, TempHP_max, TempHP_max, Exp_now, TempExp_next, TempLevel, Money)),
     write('You have Leveled Up!!!'),nl,
-    level_enemy,
     !.
 
 level_enemy :-
