@@ -356,8 +356,10 @@ infomap :-
     write('P is your position right now'), nl,
     write('Q is Quest position'), nl,
     write('S is Shop position'), nl,
-    write('D is the final boss position'), nl.
-
+    write('D is the final boss position'), nl,
+    write('+ is a tree'), nl,
+    write('# is pond/wall'), nl,
+    write('& is boulder'), nl.
 
 
 /* Mungkin dipindahkan ke map.pl */

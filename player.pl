@@ -187,22 +187,32 @@ initJob(Username) :-
     nl, write('Choose your job'), nl,
     write('The following is information from each job:'), nl,
     job_stat,
+    write('Your Choice: '), read(Job),
     Exp_now is 0,
     Exp_next is 100,
     Level is 1,
-    Money is 100,
-    State = 'adventure',
-    ListWeapon = [],
+    Money is 100,(
+        Job = 1 -> (
+            ListWeapon = [saber]
+        );
+        Job = 2 -> (
+            ListWeapon = [lightshoot_bow]
+        );
+        Job = 3 -> (
+            ListWeapon = [thorn_staff]
+        );
+        (ListWeapon = [])
+    ),
     ListArmor = [],
     ListAcc = [],
     ListSpell = [heal, heal, heal, heal, heal],
     CurrWeapon = none,
     CurrArmor = none,
     CurrAcc = none,
+    State = 'alive',
     asserta(statePlayer(State)),
     asserta(inventoryPlayer(ListWeapon, ListArmor, ListAcc, ListSpell)),
     asserta(currentEquip(CurrWeapon, CurrArmor, CurrAcc)),
-    write('Your Choice: '), read(Job),
     (
         Job =:= 1 ->
             Job_name = 'swordsman',

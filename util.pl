@@ -57,4 +57,12 @@ delElmtList([], _, []) :- !.
 delElmtList([H|T], H, T) :- !.
 delElmtList([H|T], X, [H|Ans]) :- delElmtList(T, X, Ans), !.
 
+
+getTxtList(List, Ans) :-
+    List = [H|T], 
+    decompose_file_name(H, _, Name, X),
+    (X = '.txt'), getTxtList(T, Ans2), Ans = [Name|Ans2], !;
+    List = [_, T], getTxtList(T, Ans2), Ans = Ans2, !;
+    Ans = [], !.
+
 /*============ END LIST =========== */
