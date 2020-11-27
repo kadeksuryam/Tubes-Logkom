@@ -1,1 +1,2 @@
 [kadek,warrior,160,130,500,500,0,100,1,100,berpetualang].
+[1,2].

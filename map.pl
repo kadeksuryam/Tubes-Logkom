@@ -11,6 +11,8 @@
 :- dynamic(isFight/1).
 /* Dungeon boss coordinate */
 dungeonBossCoor(20,-20).
+:- include('quest.pl').
+
 /* Other Object in map */
                          tree(3,-7).
             tree(2,-8).  tree(3,-8).  tree(4,-8).

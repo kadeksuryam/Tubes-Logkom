@@ -49,5 +49,8 @@ load :-
     read(Stream, X),
     X = [Username, Job_name, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money, State|_],
     asserta(player(Username, Job_name, Attack, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)),
-    asserta(statePlayer(State)), close(Stream);
+    asserta(statePlayer(State)),
+    read(Stream, PosPemain),
+    write(PosPemain),
+     close(Stream), !;
     at_end_of_stream(Stream).

@@ -160,7 +160,7 @@ inventory :-
             delElmtList(ListWeapon, ItemName, I1),
             delElmtList(ListArmor, ItemName, I2),
             delElmtList(ListAcc, ItemName, I3),
-            delElmtList(ListSpell, ItemName, I4),
+            delElmtList(ListSpell, ItemName, I4),(
             member(ItemName, ListWeapon) -> (
                 MoneyAdd is 50
             );
@@ -172,7 +172,7 @@ inventory :-
             );
             member(ItemName, ListSpell) -> (
                 MoneyAdd is 25
-            );
+            )),
             player(Username, Job, Attack, Dmg_skill, Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money),
             Money2 is Money+MoneyAdd,
             retract(player(_, _, _, _, _, _, _, _, _, _, _)),

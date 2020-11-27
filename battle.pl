@@ -1,4 +1,4 @@
-:- include('quest.pl').
+
 /*enemy(enemy_name,atk,def, hp_now, hp_max,exp,drop,atk_skill)*/
 /*player(Username, Job, Attack, dmg_skill,Defense, Hp_now, Hp_max, Exp_now, Exp_next, Level, Money)*/
 :- dynamic(isEnemySkill/1).
